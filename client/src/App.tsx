@@ -1,20 +1,28 @@
 import { useEffect, useState } from 'react';
 
-function App() {
-  const [message, setMessage] = useState<string>('');
+const App: React.FC = () => {
+  const [message, setMessage] = useState<string>('Loading...');
 
   useEffect(() => {
-    fetch('https://your-backend-url.onrender.com/api/hello')
-      .then(res => res.json())
-      .then(data => setMessage(data.message))
-      .catch(err => console.error('Error:', err));
+    const fetchMessage = async () => {
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/hello`);
+        const data = await response.json();
+        setMessage(data.message);
+      } catch (error) {
+        console.error('Error fetching message from backend:', error);
+        setMessage('Failed to fetch message.');
+      }
+    };
+
+    fetchMessage();
   }, []);
 
   return (
-    <div className="p-4 text-xl">
-      Backend says: {message}
-    </div>
+    <main className="flex items-center justify-center h-screen bg-gray-100 text-2xl font-semibold">
+      <p>{message}</p>
+    </main>
   );
-}
+};
 
 export default App;
